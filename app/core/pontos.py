@@ -1,5 +1,5 @@
 PONTOS = [
-    {"nome": "Acrópole de Atenas",     "lat": 37.9715, "lon": 23.7257, "descricao": "Colina sagrada com o Partenon (séc. V a.C.)."},
+    {"nome": "Acrópole de Atenas",     "lat": 37.9715, "lon": 23.7257, "descricao": "Colina sagrada com o Partenon"},
     {"nome": "Ágora Antiga de Atenas",   "lat": 37.9755, "lon": 23.7216, "descricao": "Centro da vida pública da Atenas clássica."},
     {"nome": "Templo de Zeus Olímpico", "lat": 37.9693, "lon": 23.7330, "descricao": "Maior templo da Grécia antiga."},
     {"nome": "Estádio Panatenaico", "lat": 37.9684, "lon": 23.7411, "descricao": "Estádio de mármore das Olimpíadas de 1896."},
@@ -8,7 +8,7 @@ PONTOS = [
     {"nome": "Delfos",  "lat": 38.4824, "lon": 22.5010, "descricao": "Santuário do oráculo de Apolo."},
     {"nome": "Olímpia", "lat": 37.6384, "lon": 21.6300, "descricao": "Berço dos Jogos Olímpicos antigos."},
     {"nome": "Micenas",  "lat": 37.7308, "lon": 22.7564, "descricao": "Cidadela de Agamêmnon e Portão dos Leões."},
-    {"nome": "Teatro de Epidauro", "lat": 37.5963, "lon": 23.0795, "descricao": "Teatro com acústica perfeita (séc. IV a.C.)."},
+    {"nome": "Teatro de Epidauro", "lat": 37.5963, "lon": 23.0795, "descricao": "Teatro com acústica perfeita"},
     {"nome": "Canal de Corinto", "lat": 37.9333, "lon": 22.9828, "descricao": "Canal estreito cortado na rocha, ligando dois mares."},
     {"nome": "Meteora", "lat": 39.7217, "lon": 21.6306, "descricao": "Mosteiros no topo de formações rochosas."},
     {"nome": "Torre Branca", "lat": 40.6264, "lon": 22.9484, "descricao": "Símbolo da cidade de Tessalônica."},
