@@ -3,18 +3,28 @@ import math
 RAIO_TERRA_KM = 6371.0
 
 def _projetar(pontos):
+    # cada ponto ganha um id (índice na lista de entrada), assim nomes repetidos não atrapalham
     lat_media = math.radians(sum(p["lat"] for p in pontos) / len(pontos))
     fator_x = RAIO_TERRA_KM * math.cos(lat_media)
 
     projetados = [
         {
-            "nome": p["nome"], "lat": p["lat"], "lon": p["lon"],
+            "id": i, "nome": p["nome"], "lat": p["lat"], "lon": p["lon"],
             "x": fator_x * math.radians(p["lon"]),
             "y": RAIO_TERRA_KM * math.radians(p["lat"]),
         }
-        for p in pontos
+        for i, p in enumerate(pontos)
     ]
     return projetados, fator_x
+
+
+def _haversine(a, b):
+    # distância real sobre a esfera, usada só para conferir o par final
+    lat1, lat2 = math.radians(a["lat"]), math.radians(b["lat"])
+    d_lat = lat2 - lat1
+    d_lon = math.radians(b["lon"] - a["lon"])
+    h = math.sin(d_lat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(d_lon / 2) ** 2
+    return 2 * RAIO_TERRA_KM * math.asin(math.sqrt(h))
 
 
 def _distancia(a, b, ctx):
@@ -35,14 +45,16 @@ def _forca_bruta(pontos, ctx):
 
 def _resolver(px, py, nivel, ctx):
     n = len(px)
+    # limites (em longitude) do subproblema atual, para o front sombrear a região
+    regiao = [px[0]["lon"], px[-1]["lon"]]
 
     # CASO BASE: poucos pontos, força bruta
     if n <= 3:
         d, a, b = _forca_bruta(px, ctx)
         ctx["eventos"].append({
-            "tipo": "base", "nivel": nivel,
-            "pontos": [p["nome"] for p in px],
-            "par": [a["nome"], b["nome"]],
+            "tipo": "base", "nivel": nivel, "regiao_lon": regiao,
+            "pontos": [p["id"] for p in px],
+            "par": [a["id"], b["id"]],
             "distancia_km": round(d, 2),
             "mensagem": (
                 f"Só {n} pontos: compara todos os pares por força bruta. "
@@ -57,14 +69,14 @@ def _resolver(px, py, nivel, ctx):
     lon_linha = (px[meio - 1]["lon"] + px[meio]["lon"]) / 2
 
     esq_x, dir_x = px[:meio], px[meio:]
-    nomes_esq = {p["nome"] for p in esq_x}
-    esq_y = [p for p in py if p["nome"] in nomes_esq]
-    dir_y = [p for p in py if p["nome"] not in nomes_esq]
+    ids_esq = {p["id"] for p in esq_x}
+    esq_y = [p for p in py if p["id"] in ids_esq]
+    dir_y = [p for p in py if p["id"] not in ids_esq]
 
     ctx["eventos"].append({
-        "tipo": "dividir", "nivel": nivel,
-        "esquerda": [p["nome"] for p in esq_x],
-        "direita": [p["nome"] for p in dir_x],
+        "tipo": "dividir", "nivel": nivel, "regiao_lon": regiao,
+        "esquerda": [p["id"] for p in esq_x],
+        "direita": [p["id"] for p in dir_x],
         "lon_linha": round(lon_linha, 5),
         "mensagem": (
             f"Divide {n} pontos por uma linha vertical (longitude {lon_linha:.3f}): "
@@ -90,7 +102,7 @@ def _resolver(px, py, nivel, ctx):
         while j < len(faixa) and faixa[j]["y"] - faixa[i]["y"] < delta:
             d = _distancia(faixa[i], faixa[j], ctx)
             comparacoes.append({
-                "a": faixa[i]["nome"], "b": faixa[j]["nome"],
+                "a": faixa[i]["id"], "b": faixa[j]["id"],
                 "distancia_km": round(d, 2),
             })
             if d < delta:
@@ -109,13 +121,13 @@ def _resolver(px, py, nivel, ctx):
     )
 
     ctx["eventos"].append({
-        "tipo": "faixa", "nivel": nivel,
+        "tipo": "faixa", "nivel": nivel, "regiao_lon": regiao,
         "lon_linha": round(lon_linha, 5),
         "faixa_lon": [round(lon_linha - meia_largura, 5), round(lon_linha + meia_largura, 5)],
         "delta_antes_km": round(delta_antes, 2),
-        "pontos_faixa": [p["nome"] for p in faixa],
+        "pontos_faixa": [p["id"] for p in faixa],
         "comparacoes": comparacoes,
-        "par": [melhor_a["nome"], melhor_b["nome"]],
+        "par": [melhor_a["id"], melhor_b["id"]],
         "distancia_km": round(delta, 2),
         "melhorou": melhorou,
         "mensagem": texto,
@@ -137,7 +149,9 @@ def par_mais_proximo(pontos):
     n = len(pontos)
     return {
         "par": [a["nome"], b["nome"]],
+        "par_ids": [a["id"], b["id"]],
         "distancia_km": round(d, 2),
+        "distancia_real_km": round(_haversine(a, b), 2),
         "comparacoes_dc": ctx["comparacoes"],
         "comparacoes_forca_bruta": n * (n - 1) // 2,
         "eventos": ctx["eventos"],
