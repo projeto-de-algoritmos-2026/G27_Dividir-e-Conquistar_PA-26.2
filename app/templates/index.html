@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roteiro Grécia — Par Mais Próximo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="layout">
+    <aside class="painel">
+      <header>
+        <h1>Roteiro pela Grécia</h1>
+        <p class="sub">Escolha os lugares que quer visitar e descubra quais dois ficam mais próximos, usando <strong>Dividir e Conquistar</strong> em O(n log n).</p>
+      </header>
+
+      <section class="bloco">
+        <div class="bloco-titulo">
+          <h2>Pontos <span id="contador-pontos" class="tag"></span></h2>
+          <div class="acoes-mini">
+            <button id="btn-todos" class="link">todos</button>
+            <button id="btn-nenhum" class="link">nenhum</button>
+          </div>
+        </div>
+        <ul id="lista-pontos" class="lista-pontos"></ul>
+        <button id="btn-adicionar" class="btn secundario">+ Adicionar ponto no mapa</button>
+      </section>
+
+      <section class="bloco">
+        <button id="btn-executar" class="btn primario">Executar algoritmo</button>
+        <div class="controles">
+          <button id="btn-inicio" class="btn icone" title="Início" disabled>⏮</button>
+          <button id="btn-anterior" class="btn icone" title="Passo anterior" disabled>◀</button>
+          <button id="btn-play" class="btn icone" title="Play/Pause" disabled>▶</button>
+          <button id="btn-proximo" class="btn icone" title="Próximo passo" disabled>▶|</button>
+          <button id="btn-fim" class="btn icone" title="Resultado" disabled>⏭</button>
+        </div>
+        <label class="velocidade">Velocidade
+          <input id="velocidade" type="range" min="200" max="3000" step="100" value="1200">
+        </label>
+      </section>
+
+      <section class="bloco">
+        <div class="passo-cab">
+          <span id="passo-num" class="tag">—</span>
+          <span id="passo-tipo" class="tipo"></span>
+        </div>
+        <p id="passo-msg" class="mensagem">Clique em <strong>Executar</strong> para ver o algoritmo rodando passo a passo.</p>
+        <div class="metricas">
+          <div><span class="rotulo">Comparações D&amp;C</span><span id="m-dc" class="valor">—</span></div>
+          <div><span class="rotulo">Força bruta</span><span id="m-fb" class="valor">—</span></div>
+        </div>
+        <div id="erro" class="erro" hidden></div>
+      </section>
+
+      <section id="resultado" class="bloco resultado" hidden>
+        <h2>Visite juntos</h2>
+        <p id="res-par" class="res-par"></p>
+        <p id="res-dist" class="res-dist"></p>
+      </section>
+
+      <section class="bloco legenda">
+        <span><i class="cor esq"></i>metade esquerda</span>
+        <span><i class="cor dir"></i>metade direita</span>
+        <span><i class="cor faixa"></i>faixa central</span>
+        <span><i class="cor par"></i>melhor par</span>
+      </section>
+    </aside>
+
+    <main id="mapa" class="mapa"></main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
