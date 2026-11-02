@@ -2,6 +2,8 @@
 
 Roteiro turístico pela Grécia que encontra os **dois pontos mais próximos** entre os lugares escolhidos pelo usuário, usando o algoritmo de **Dividir e Conquistar** para o problema do *par de pontos mais próximo*, com visualização passo a passo no mapa.
 
+Vídeo apresentação: https://youtu.be/0H11iVSAx0Y
+
 ## Alunos
 
 | Matrícula | Aluno |
